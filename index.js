@@ -9,4 +9,6 @@ var headers = {
     "Referer:":"https://futebolplayhd.com/"
 };
 
-fetch(stream, {headers: headers}).then;
+fetch(stream, {headers: headers}).then(res => res.buffer()).then(buffer => {
+    fs.writeFileSync("playlist.m3u8", buffer);
+}).catch(ex => console.log("Erro: " + ex));
