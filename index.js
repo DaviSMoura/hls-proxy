@@ -19,15 +19,23 @@ function start() {
     baixar(stream,headers,playlistFile);
     
     var novaPlaylist = "";
-    linereader.eachLine(playlistFile, (line) => {
-        
+    linereader.eachLine(playlistFile, function(line, last) {
         if (line.startsWith("http")) {
             var spliced = line.split("/");
-            baixar(line,headers,chunksFolder + "/" + spliced[spliced.length-1].replace("https","http")); 
+            baixar(line,headers,chunksFolder + spliced[spliced.length-1].replace("https","http"));
+            novaPlaylist += "\n" + chunksFolder + spliced[spliced.length-1].replace("https","http");
+        } else {
+            novaPlaylist += "\n" + line;
+        }
+        if (last) {
+            criar("playlist.m3u8",novaPlaylist)
         }
     });
 }
 
+function criar(nome,contents) {
+    fs.writeFile(nome, contents, () => {});
+}
 
 function baixar(link, headers, destino) {
     fetch(link, {headers: headers}).then(res => res.buffer()).then(buffer => {
